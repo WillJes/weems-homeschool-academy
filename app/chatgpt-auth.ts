@@ -1,4 +1,4 @@
-import {currentUser} from "@clerk/nextjs/server";
+import {auth,createClerkClient} from "@clerk/nextjs/server";
 import {redirect} from "next/navigation";
 
 export type ChatGPTUser = {displayName:string;email:string;fullName:string|null};
@@ -6,8 +6,11 @@ const SIGN_IN_PATH = "/sign-in";
 const SIGN_OUT_PATH = "/sign-out";
 
 export async function getChatGPTUser(): Promise<ChatGPTUser|null> {
-  const user=await currentUser();
-  if(!user)return null;
+  const {userId}=await auth();
+  if(!userId)return null;
+  const secretKey=process.env.CLERK_SECRET_KEY??process.env.Weems_Rosenduft_Academy_CLERK_SECRET_KEY;
+  if(!secretKey)throw new Error("Clerk secret key is not configured.");
+  const user=await createClerkClient({secretKey}).users.getUser(userId);
   const primary=user.emailAddresses.find(address=>address.id===user.primaryEmailAddressId);
   const email=primary?.emailAddress??user.emailAddresses[0]?.emailAddress;
   if(!email)return null;
