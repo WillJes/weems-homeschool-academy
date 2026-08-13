@@ -4,9 +4,16 @@ export const APPROVED_INSTRUCTORS=[
  "damora1528@gmail.com",
  "trnging@gmail.com"
 ];
+export const APPROVED_DOE_VIEWERS=[
+ "nrufo@schools.nyc.gov",
+ "ablake11@schools.nyc.gov",
+ "mholihan2@schools.nyc.gov",
+ "dmark@schools.nyc.gov"
+];
 export const normalizeEmail=(email:string)=>email.trim().toLowerCase();
 export const isAdministrator=(email:string)=>normalizeEmail(email)===ADMIN_EMAIL;
 export const isApprovedInstructor=(email:string)=>isAdministrator(email)||APPROVED_INSTRUCTORS.includes(normalizeEmail(email));
+export const isApprovedDOEViewer=(email:string)=>APPROVED_DOE_VIEWERS.includes(normalizeEmail(email));
 export const studentForEmail=(email:string)=>{
  const normalized=normalizeEmail(email);
  if(isAdministrator(normalized))return "administrator";
