@@ -1,12 +1,9 @@
-import {SignIn} from "@clerk/nextjs";
-import {getChatGPTUser} from "../chatgpt-auth";
-import {InstructorProfile} from "./profile";
-
-export const dynamic="force-dynamic";
-const ADMIN="weemsjestina@gmail.com";
-
-export default async function InstructorPage(){
- const user=await getChatGPTUser();
- if(!user)return <main className="instructorGate"><section><b className="gateMark">WR</b><small>WEEMS-ROSENDUFT ACADEMY</small><h1>Instructor Portal</h1><p>Approved family instructors can sign in, create their own teaching profile and enter the shared Academy workspace.</p><SignIn routing="hash"/><a href="/">← Return to public homepage</a></section></main>;
- return <InstructorProfile email={user.email} initialName={user.displayName} isAdmin={user.email.toLowerCase()===ADMIN}/>;
+"use client";
+import {useEffect,useState} from "react";
+type Profile={name:string;role:string;subjects:string;bio:string;photo:string};
+export function InstructorProfile({email,initialName,isAdmin}:{email:string;initialName:string;isAdmin:boolean}){
+ const key=`wr-instructor-${email.toLowerCase()}`,[profile,setProfile]=useState<Profile>({name:initialName,role:"Family Instructor",subjects:"",bio:"",photo:""}),[saved,setSaved]=useState(false);
+ useEffect(()=>{try{const old=localStorage.getItem(key);if(old)setProfile(JSON.parse(old))}catch{}},[key]);
+ const update=(field:keyof Profile,value:string)=>{setProfile({...profile,[field]:value});setSaved(false)},photo=(file?:File)=>{if(!file)return;const reader=new FileReader();reader.onload=()=>update("photo",String(reader.result||""));reader.readAsDataURL(file)},save=()=>{localStorage.setItem(key,JSON.stringify(profile));setSaved(true)};
+ return <main className="instructorPage"><nav><a className="publicBrand" href="/"><img src="/branding/weems-rosenduft-academy-logo.jpg" alt="Academy logo"/><span>WEEMS-ROSENDUFT<small>Academy</small></span></a><div><a href="/">Academy home</a>{isAdmin&&<a href="/admin">Administrator records</a>}</div></nav><header><div className="instructorAvatar">{profile.photo?<img src={profile.photo} alt="Instructor profile"/>:profile.name.slice(0,1).toUpperCase()}<label>＋<input type="file" accept="image/*" onChange={e=>photo(e.target.files?.[0])}/></label></div><div><small>AUTHENTICATED INSTRUCTOR</small><h1>{profile.name||"My instructor page"}</h1><p>{email}</p></div><span className="accessBadge">{isAdmin?"Administrator + instructor":"Instructor access"}</span></header><section className="instructorGrid"><article className="profileEditor"><small>PERSONALIZE YOUR PAGE</small><h2>Teaching profile</h2><label>Display name<input value={profile.name} onChange={e=>update("name",e.target.value)}/></label><label>Role or relationship<input value={profile.role} onChange={e=>update("role",e.target.value)} placeholder="Science instructor, tutor, family member…"/></label><label>Subjects and skills<input value={profile.subjects} onChange={e=>update("subjects",e.target.value)} placeholder="Art, history, coding, piano…"/></label><label>Teaching note<textarea value={profile.bio} onChange={e=>update("bio",e.target.value)} placeholder="How I support the learners and what I teach…"/></label><button onClick={save}>{saved?"✓ Profile saved on this device":"Save my profile"}</button><p className="privacyNote">Profile details and photo stay on this device during this first secure phase. They are not published on the public homepage.</p></article><aside><article><span>📅</span><h3>Open the school workspace</h3><p>View the full-year plan, current quarter, weekly lessons, resources and team tools.</p><a href="/workspace">Enter private Academy workspace →</a></article><article><span>☁️</span><h3>Instructor resources</h3><p>Open shared templates and approved learning materials.</p><a href="/resources/drive">Open resources →</a></article><article className="securityCard"><span>🔐</span><h3>Privacy boundary</h3><p>Instructor accounts can use teaching tools and profiles. Official student records remain restricted to the administrator.</p>{isAdmin&&<a href="/admin">Open administrator records →</a>}</article></aside></section></main>;
 }
