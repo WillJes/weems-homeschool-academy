@@ -7,7 +7,7 @@ const portals={jerome:{name:"Jerome",grade:"Grade 10",title:"Jerome’s Next Lev
 
 export default async function StudentPage(){
  const user=await getChatGPTUser();
- if(!user)return <main className="studentGate"><section><img src="/branding/weems-rosenduft-academy-logo.jpg" alt="Academy logo"/><small>WEEMS-ROSENDUFT ACADEMY</small><h1>Student Portal</h1><p>Sign in with an approved student account. Each learner will be taken to their own personalized learning world.</p><SignIn routing="hash"/><a href="/">← Return to the Academy homepage</a></section></main>;
+ if(!user)return <main className="studentGate"><section><img src="/branding/weems-rosenduft-academy-logo.jpg" alt="Academy logo"/><small>WEEMS-ROSENDUFT ACADEMY</small><h1>Student Portal</h1><p>Sign in with an approved student account. Each learner will be taken to their own personalized learning world.</p><SignIn routing="hash" forceRedirectUrl="/student" fallbackRedirectUrl="/student"/><a href="/">← Return to the Academy homepage</a></section></main>;
  const access=studentForEmail(user.email);
  if(!access)return <main className="studentGate"><section><img src="/branding/weems-rosenduft-academy-logo.jpg" alt="Academy logo"/><small>STUDENT ACCESS</small><h1>Student account not connected</h1><p><strong>{user.email}</strong> is signed in but has not been assigned to a student portal yet. Ask the administrator to add this email.</p><a href="/">← Return to the Academy homepage</a></section></main>;
  const choices=access==="administrator"?Object.values(portals):[portals[access]];
