@@ -31,9 +31,10 @@ async function studentLogout(){"use server";(await cookies()).delete(COOKIE);red
 export default async function StudentPage({searchParams}:{searchParams:Promise<{error?:string;student?:string}>}){
  const params=await searchParams;const user=await getChatGPTUser();const admin=Boolean(user&&isAdministrator(user.email));
  const student=readStudentSession((await cookies()).get(COOKIE)?.value,process.env.STUDENT_SESSION_SECRET);const choices=admin?Object.values(portals):student?[portals[student]]:[];
+ const missingSetup=[!process.env.JEROME_STUDENT_PIN&&"JEROME_STUDENT_PIN",!process.env.KAMERON_STUDENT_PIN&&"KAMERON_STUDENT_PIN",!process.env.STUDENT_SESSION_SECRET&&"STUDENT_SESSION_SECRET"].filter(Boolean).join(", ");
  if(!choices.length)return <main className="studentGate"><section className="studentChoiceGate">
   <img src="/branding/weems-rosenduft-academy-logo.jpg" alt="Academy logo"/><small>WEEMS-ROSENDUFT ACADEMY</small><h1>Who is learning today?</h1><p>Choose a student and enter their private Academy PIN.</p>
-  {params.error==="pin"&&<p className="studentLoginError">That PIN was not correct. Please try again.</p>}{params.error==="setup"&&<p className="studentLoginError">This student’s PIN still needs to be added in the Academy’s secure settings.</p>}
+  {params.error==="pin"&&<p className="studentLoginError">That PIN was not correct. Please try again.</p>}{params.error==="setup"&&<p className="studentLoginError">Secure setup missing: {missingSetup||"redeploy required"}.</p>}
   <div className="studentLoginChoices">{(Object.keys(portals) as StudentKey[]).map(key=><form action={studentLogin} key={key} className={params.student===key?"selected":""}>
    <input type="hidden" name="student" value={key}/><b>{portals[key].name[0]}</b><h2>{portals[key].name}</h2><small>{portals[key].grade}</small><label>Private PIN<input name="pin" type="password" inputMode="numeric" autoComplete="current-password" required placeholder="Enter PIN"/></label><button type="submit">Open {portals[key].name}’s portal →</button>
   </form>)}</div><p className="parentAccess">Parent or administrator? <a href="/admin">Open administrator login</a></p><a href="/">← Return to the Academy homepage</a>
