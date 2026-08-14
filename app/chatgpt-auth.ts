@@ -7,8 +7,16 @@ const SIGN_OUT_PATH = "/sign-out";
 
 export async function getChatGPTUser(): Promise<ChatGPTUser|null> {
   try {
-    const {userId}=await auth();
+    const {userId,sessionClaims}=await auth();
     if(!userId)return null;
+    // Prefer the email already carried by Clerk's signed session. This avoids
+    // making the portal depend on a second Clerk API request after sign-in.
+    const claims=sessionClaims as Record<string,unknown>|null;
+    const claimEmail=[claims?.email,claims?.email_address,claims?.primary_email_address]
+      .find(value=>typeof value==="string"&&value.includes("@")) as string|undefined;
+    const claimName=[claims?.name,claims?.full_name]
+      .find(value=>typeof value==="string"&&value.trim()) as string|undefined;
+    if(claimEmail)return {displayName:claimName??claimEmail,email:claimEmail,fullName:claimName??null};
     const secretKey=process.env.CLERK_SECRET_KEY??process.env.Weems_Rosenduft_Academy_CLERK_SECRET_KEY;
     if(!secretKey){
       console.error("[academy-auth] Clerk secret key is not configured");
