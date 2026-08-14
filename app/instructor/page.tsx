@@ -1,12 +1,10 @@
-import {SignIn} from "@clerk/nextjs";
-import {getChatGPTUser} from "../chatgpt-auth";
 import {InstructorProfile} from "./profile";
-import {isAdministrator,isApprovedInstructor} from "../access-control";
+import {instructorLogin,instructorLogout,instructors,getInstructorSession,type InstructorKey} from "../instructor-auth";
 
 export const dynamic="force-dynamic";
-export default async function InstructorPage(){
- const user=await getChatGPTUser();
- if(!user)return <main className="instructorGate"><section><img className="workspaceGateLogo" src="/branding/weems-rosenduft-academy-logo.jpg" alt="Weems-Rosenduft Academy"/><small>APPROVED INSTRUCTORS</small><h1>Instructor Portal</h1><p>Sign in with the approved Google account or email address assigned to you. After sign-in, you will return directly to your private instructor dashboard.</p><SignIn routing="hash" forceRedirectUrl="/instructor" signUpForceRedirectUrl="/instructor"/><a href="/">← Return to public homepage</a></section></main>;
- if(!isApprovedInstructor(user.email))return <main className="instructorGate"><section><img className="workspaceGateLogo" src="/branding/weems-rosenduft-academy-logo.jpg" alt="Academy logo"/><small>INSTRUCTOR ACCESS</small><h1>Approval required</h1><p><strong>{user.email}</strong> is signed in, but this address is not on the approved Academy instructor list. Contact the administrator before continuing.</p><a href="/sign-out?redirect_url=%2Finstructor">Sign out and use another account →</a><a href="/">← Return to the Academy homepage</a></section></main>;
- return <InstructorProfile email={user.email} initialName={user.displayName} isAdmin={isAdministrator(user.email)}/>;
+export default async function InstructorPage({searchParams}:{searchParams:Promise<{error?:string;instructor?:string}>}){
+ const params=await searchParams;
+ const session=await getInstructorSession();
+ if(!session)return <main className="instructorGate"><section className="instructorLoginCard"><img className="workspaceGateLogo" src="/branding/weems-rosenduft-academy-logo.jpg" alt="Weems-Rosenduft Academy"/><small>APPROVED INSTRUCTORS</small><h1>Instructor Portal</h1><p>Choose your name, enter your approved Academy email and private portal PIN to open your daily dashboard.</p>{params.error==="email"&&<p className="studentLoginError">That email does not match the selected instructor.</p>}{params.error==="pin"&&<p className="studentLoginError">That instructor PIN was not correct.</p>}{params.error==="setup"&&<p className="studentLoginError">The instructor access PIN still needs to be added in Vercel.</p>}<form action={instructorLogin} className="instructorLoginForm"><label>Instructor name<select name="instructor" defaultValue={params.instructor??""} required><option value="" disabled>Choose an instructor</option>{(Object.keys(instructors) as InstructorKey[]).map(key=><option value={key} key={key}>{instructors[key].name}</option>)}</select></label><label>Approved email<input name="email" type="email" autoComplete="email" required placeholder="Enter your approved email"/></label><label>Private portal PIN<input name="pin" type="password" inputMode="numeric" autoComplete="current-password" required placeholder="Enter instructor PIN"/></label><button type="submit">Open my daily dashboard →</button></form><a href="/">← Return to public homepage</a></section></main>;
+ return <><form action={instructorLogout} className="instructorSignout"><button type="submit">Switch instructor / sign out</button></form><InstructorProfile email={session.email} initialName={session.name} isAdmin={session.key==="jestina"}/></>;
 }
