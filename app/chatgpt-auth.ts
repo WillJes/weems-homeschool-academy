@@ -6,16 +6,26 @@ const SIGN_IN_PATH = "/sign-in";
 const SIGN_OUT_PATH = "/sign-out";
 
 export async function getChatGPTUser(): Promise<ChatGPTUser|null> {
-  const {userId}=await auth();
-  if(!userId)return null;
-  const secretKey=process.env.CLERK_SECRET_KEY??process.env.Weems_Rosenduft_Academy_CLERK_SECRET_KEY;
-  if(!secretKey)throw new Error("Clerk secret key is not configured.");
-  const user=await createClerkClient({secretKey}).users.getUser(userId);
-  const primary=user.emailAddresses.find(address=>address.id===user.primaryEmailAddressId);
-  const email=primary?.emailAddress??user.emailAddresses[0]?.emailAddress;
-  if(!email)return null;
-  const fullName=[user.firstName,user.lastName].filter(Boolean).join(" ")||null;
-  return {displayName:fullName??email,email,fullName};
+  try {
+    const {userId}=await auth();
+    if(!userId)return null;
+    const secretKey=process.env.CLERK_SECRET_KEY??process.env.Weems_Rosenduft_Academy_CLERK_SECRET_KEY;
+    if(!secretKey){
+      console.error("[academy-auth] Clerk secret key is not configured");
+      return null;
+    }
+    const user=await createClerkClient({secretKey}).users.getUser(userId);
+    const primary=user.emailAddresses.find(address=>address.id===user.primaryEmailAddressId);
+    const email=primary?.emailAddress??user.emailAddresses[0]?.emailAddress;
+    if(!email)return null;
+    const fullName=[user.firstName,user.lastName].filter(Boolean).join(" ")||null;
+    return {displayName:fullName??email,email,fullName};
+  } catch(error) {
+    // Treat an expired or mismatched Clerk session as signed out. This keeps
+    // every portal usable while still failing closed for protected content.
+    console.error("[academy-auth] Unable to resolve signed-in user",error);
+    return null;
+  }
 }
 
 export async function requireChatGPTUser(returnTo:string):Promise<ChatGPTUser>{const user=await getChatGPTUser();if(user)return user;redirect(chatGPTSignInPath(returnTo))}
