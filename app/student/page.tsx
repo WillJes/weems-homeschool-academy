@@ -5,6 +5,7 @@ import {getChatGPTUser} from "../chatgpt-auth";
 import {isAdministrator} from "../access-control";
 
 export const dynamic="force-dynamic";
+// Student PIN settings are read at runtime from the current Vercel deployment.
 type StudentKey="jerome"|"kameron";
 const portals:Record<StudentKey,{name:string;grade:string;title:string;description:string;url:string}>={
  jerome:{name:"Jerome",grade:"Grade 10",title:"Jerome’s Next Level",description:"Academics, executive function, careers, technology, life skills and leadership.",url:"https://jeromes-next-level.jes-84.chatgpt.site"},
