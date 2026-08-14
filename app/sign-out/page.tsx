@@ -1,0 +1,2 @@
+import {SignOutButton} from "@clerk/nextjs";
+export default async function SignOutPage({searchParams}:{searchParams:Promise<{redirect_url?:string}>}){const {redirect_url}=await searchParams;const returnTo=redirect_url?.startsWith("/")&&!redirect_url.startsWith("//")?redirect_url:"/";return <main style={{minHeight:"100vh",display:"grid",placeItems:"center",padding:"2rem"}}><section><h1>Sign out of the Academy?</h1><SignOutButton redirectUrl={returnTo}><button>Sign out securely</button></SignOutButton></section></main>}
