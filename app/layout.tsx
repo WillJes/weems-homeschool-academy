@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import {ClerkProvider} from "@clerk/nextjs";\nimport {GradeSpanBanner} from "./grade-span-banner";
+import {ClerkProvider} from "@clerk/nextjs";
+import {GradeSpanBanner} from "./grade-span-banner";
 import "./globals.css";
 import "./week.css";
 export const metadata: Metadata = {title:"Weems-Rosenduft Academy",description:"The Weems-Rosenduft Academy family learning command center and interactive 90-day plan.",other:{"codex-preview":"development"}};
