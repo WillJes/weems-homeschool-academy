@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title:"Weems-Rosenduft Academy",
   description:"The Weems-Rosenduft Academy family learning command center and interactive 90-day plan.",
   manifest:"/manifest.webmanifest",
+  appleWebApp:{capable:true,title:"WRA",statusBarStyle:"default"},
   icons:{
     icon:[{url:"/branding/weems-rosenduft-academy-logo.jpg",type:"image/jpeg"}],
     apple:[{url:"/branding/weems-rosenduft-academy-logo.jpg",type:"image/jpeg"}],
