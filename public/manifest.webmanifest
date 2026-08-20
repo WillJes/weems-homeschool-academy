@@ -1,0 +1,17 @@
+{
+  "name": "Weems-Rosenduft Academy",
+  "short_name": "WRA Academy",
+  "description": "The Weems-Rosenduft Academy family learning command center.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fffaf0",
+  "theme_color": "#5b2c83",
+  "icons": [
+    {
+      "src": "/branding/weems-rosenduft-academy-logo.jpg",
+      "sizes": "1254x1254",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}
