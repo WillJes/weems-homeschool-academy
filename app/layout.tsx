@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import {ClerkProvider} from "@clerk/nextjs";
 import {GradeSpanBanner} from "./grade-span-banner";
+import {MobileBackButton} from "./mobile-back-button";
 import "./globals.css";
 import "./week.css";
 
@@ -18,4 +19,4 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {themeColor:"#5b2c83"};
 
 const clerkPublishableKey=process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY??process.env.NEXT_PUBLIC_Weems_Rosenduft_Academy_CLERK_PUBLISHABLE_KEY;
-export default function RootLayout({children}:{children:React.ReactNode}){return <ClerkProvider publishableKey={clerkPublishableKey}><html lang="en"><body><GradeSpanBanner/>{children}</body></html></ClerkProvider>}
+export default function RootLayout({children}:{children:React.ReactNode}){return <ClerkProvider publishableKey={clerkPublishableKey}><html lang="en"><body><GradeSpanBanner/><MobileBackButton/>{children}</body></html></ClerkProvider>}
