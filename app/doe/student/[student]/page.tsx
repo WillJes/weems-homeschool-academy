@@ -29,7 +29,7 @@ const rotations={
  ]
 } as const;
 const studentData={
- kameron:{name:"Kameron",grade:"Grade 3",title:"Dodger Learning World",color:"gold",tagline:"Read. Build. Explore. Grow.",description:"A strengths-first elementary program built around short focus blocks, visual supports, hands-on learning, movement and multiple ways to respond.",live:"https://dodger-learning-world.jes-84.chatgpt.site",classes:[
+ kameron:{name:"Kameron",grade:"Grade 3",title:"Dodger Learning World",color:"gold",tagline:"Read. Build. Explore. Grow.",description:"A strengths-first elementary program built around short focus blocks, visual supports, hands-on learning, movement and multiple ways to respond.",live:"/student/kameron",classes:[
   ["Reading & Language Arts","Phonics, fluency, comprehension, spelling and confident expression","Miacademy • Hooked on Phonics • Reading.com • owned literacy games"],
   ["Mathematics","Number sense, operations, money, measurement, geometry and problem solving","Manipulatives • dominoes • play money • visual models"],
   ["Science & Engineering","Observation, life science, Earth systems, forces, building and safe investigations","KiwiCo • MEL Science • CrunchLabs • VR/video alternatives"],
@@ -37,7 +37,7 @@ const studentData={
   ["Communication & Regulation","Self-advocacy, coping tools, transitions and confidence","Visual schedule • speech/talk-to-text • movement • choice"],
   ["Arts, Music & Life Skills","Drawing, storytelling, piano, Spanish, karate, safety and practical independence","Art inventory • Ms. Cindy • Preply • Master Pascal"]
  ],supports:["30-minute or shorter focus blocks","Directions read aloud and modeled visually","Talk, type, draw, point or build to answer","Movement and regulation breaks without penalty","Concrete math tools before abstract notation","Adult scribing or speech-to-text when writing load hides knowledge"]},
- jerome:{name:"Jerome",grade:"Grade 10",title:"Jerome’s Next Level",color:"blue",tagline:"Build skill. Lead well. Launch forward.",description:"A rigorous, supported high-school program connecting required academics to technology, careers, leadership, independence and authentic products.",live:"https://jeromes-next-level.jes-84.chatgpt.site",classes:[
+ jerome:{name:"Jerome",grade:"Grade 10",title:"Jerome’s Next Level",color:"blue",tagline:"Build skill. Lead well. Launch forward.",description:"A rigorous, supported high-school program connecting required academics to technology, careers, leadership, independence and authentic products.",live:"/student/jerome",classes:[
   ["English & Thesis Writing","Close reading, argument, evidence, research, vocabulary and revision","Literature • primary sources • SAT/ACT vocabulary • accessible drafting"],
   ["Mathematics & Financial Literacy","Algebraic reasoning, applied math, budgeting, credit, investing and decision-making","Time4Learning • Prisms option • budgets • money simulations"],
   ["Lab Science & Engineering","Biology, chemistry, physics, Earth systems, medical science and design","MEL Science • KiwiCo • CrunchLabs • VictoryXR option"],

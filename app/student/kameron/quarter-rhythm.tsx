@@ -1,0 +1,9 @@
+"use client";
+import {useEffect,useState} from "react";
+const rotations=[
+ {id:"family",icon:"🔐",when:"EVERY OTHER WEEK · TOGETHER",title:"Internet Safety + AI",text:"Practice one safety rule and use AI with an adult to make something from home materials.",credit:"Technology • Safety • Reading"},
+ {id:"builder",icon:"🏗️",when:"WEEK 1 OF THE ROTATION",title:"Master Builder",text:"Plan, measure, build, test, improve, and explain one hands-on creation.",credit:"Math • Engineering • Writing"},
+ {id:"robot",icon:"🤖",when:"WEEK 2 OF THE ROTATION",title:"Robotics",text:"Create commands, predict movement, test a sequence, and fix one bug.",credit:"Coding • Logic • Science"},
+ {id:"grip",icon:"🎥",when:"WEEK 3 OF THE ROTATION",title:"Film Grip Helper",text:"Use toy or paper materials to learn set planning, equipment names, counting, and safe teamwork.",credit:"Career Awareness • Media • Math"}
+];
+export function KameronQuarterRhythm({speak}:{speak:(text:string)=>void}){const[done,setDone]=useState<string[]>([]);useEffect(()=>{try{setDone(JSON.parse(localStorage.getItem("kameron-quarter-rhythm")||"[]"))}catch{}},[]);useEffect(()=>localStorage.setItem("kameron-quarter-rhythm",JSON.stringify(done)),[done]);return <section className="kamRhythm readable"><div><small>BUILT INTO MY 90 DAYS</small><h2>My repeating build-and-safety classes</h2><p>One short rotating mission at a time—never all at once.</p></div><div className="kamRhythmCards">{rotations.map(item=><article key={item.id}><span>{item.icon}</span><small>{item.when}</small><h3>{item.title}</h3><p>{item.text}</p><em>{item.credit}</em><button className={done.includes(item.id)?"done":""} onClick={()=>{setDone(x=>x.includes(item.id)?x.filter(y=>y!==item.id):[...x,item.id]);speak(`${item.title}. ${item.text}`)}}>{done.includes(item.id)?"✓ I did this cycle":"Mark cycle complete"}</button></article>)}</div></section>}
