@@ -1,16 +1,17 @@
 import crypto from "node:crypto";
 import {cookies} from "next/headers";
 import {redirect} from "next/navigation";
+import Image from "next/image";
 import {getChatGPTUser} from "../chatgpt-auth";
 import {isAdministrator} from "../access-control";
 
 export const dynamic="force-dynamic";
 // Student PIN settings are read at runtime from the current Vercel deployment.
 type StudentKey="jerome"|"kameron"|"marilyn";
-const portals:Record<StudentKey,{name:string;grade:string;title:string;description:string;url:string}>={
- jerome:{name:"Jerome",grade:"Grade 10",title:"Jerome’s Next Level",description:"Academics, executive function, careers, technology, life skills and leadership.",url:"https://jeromes-next-level.jes-84.chatgpt.site"},
- kameron:{name:"Kameron",grade:"Grade 3",title:"Dodger Learning World",description:"Reading, math, confidence, routines, games, hands-on discovery and affirmations.",url:"https://dodger-learning-world.jes-84.chatgpt.site"},
- marilyn:{name:"Marilyn",grade:"Early Learning",title:"Marilyn’s Learning Garden",description:"Music, dance, stories, movement, sensory play, art and early-life skills.",url:"/student/marilyn"}
+const portals:Record<StudentKey,{name:string;grade:string;title:string;description:string;url:string;photo:string}>={
+ jerome:{name:"Jerome",grade:"Grade 10",title:"Jerome’s Next Level",description:"Academics, executive function, careers, technology, life skills and leadership.",url:"/student/jerome",photo:"/students/jerome.webp"},
+ kameron:{name:"Kameron",grade:"Grade 3",title:"Dodger Learning World",description:"Reading, math, confidence, routines, games, hands-on discovery and affirmations.",url:"/student/kameron",photo:"/students/kameron.webp"},
+ marilyn:{name:"Marilyn",grade:"Early Learning",title:"Marilyn’s Learning Garden",description:"Music, dance, stories, movement, sensory play, art and early-life skills.",url:"/student/marilyn",photo:"/students/marilyn.webp"}
 };
 const COOKIE="wr_student_portal";
 function safeEqual(left:string,right:string){const a=Buffer.from(left);const b=Buffer.from(right);return a.length===b.length&&crypto.timingSafeEqual(a,b)}
@@ -39,11 +40,11 @@ export default async function StudentPage({searchParams}:{searchParams:Promise<{
  const student=readStudentSession((await cookies()).get(COOKIE)?.value,sessionSecret());const choices=admin?Object.values(portals):student?[portals[student]]:[];
  const missingSetup=[!process.env.JEROME_STUDENT_PIN&&"JEROME_STUDENT_PIN",!process.env.KAMERON_STUDENT_PIN&&"KAMERON_STUDENT_PIN",!process.env.MARILYN_STUDENT_PIN&&"MARILYN_STUDENT_PIN"].filter(Boolean).join(", ");
  if(!choices.length)return <main className="studentGate"><section className="studentChoiceGate">
-  <img src="/branding/weems-rosenduft-academy-logo.jpg" alt="Academy logo"/><small>WEEMS-ROSENDUFT ACADEMY</small><h1>Who is learning today?</h1><p>Choose a student and enter their private Academy PIN.</p>
+  <Image src="/branding/weems-rosenduft-academy-logo.jpg" alt="Academy logo" width={290} height={290} sizes="145px" priority/><small>WEEMS-ROSENDUFT ACADEMY</small><h1>Who is learning today?</h1><p>Choose a student and enter their private Academy PIN.</p>
   {params.error==="pin"&&<p className="studentLoginError">That PIN was not correct. Please try again.</p>}{params.error==="setup"&&<p className="studentLoginError">Secure setup missing: {missingSetup||"redeploy required"}.</p>}
   <div className="studentLoginChoices">{(Object.keys(portals) as StudentKey[]).map(key=><form action={studentLogin} key={key} className={params.student===key?"selected":""}>
-   <input type="hidden" name="student" value={key}/><b>{portals[key].name[0]}</b><h2>{portals[key].name}</h2><small>{portals[key].grade}</small><label>Private PIN<input name="pin" type="password" inputMode="numeric" autoComplete="current-password" required placeholder="Enter PIN"/></label><button type="submit">Open {portals[key].name}’s portal →</button>
+   <input type="hidden" name="student" value={key}/><b className="studentLoginPhoto"><Image src={portals[key].photo} alt={`${portals[key].name} profile photo`} width={160} height={160} sizes="80px"/></b><h2>{portals[key].name}</h2><small>{portals[key].grade}</small><label>Private PIN<input name="pin" type="password" inputMode="numeric" autoComplete="current-password" required placeholder="Enter PIN"/></label><button type="submit">Open {portals[key].name}’s portal →</button>
   </form>)}</div><p className="parentAccess">Parent or administrator? <a href="/admin">Open administrator login</a></p><a href="/">← Return to the Academy homepage</a>
  </section></main>;
- return <main className="studentPortal"><nav><a href="/"><img src="/branding/weems-rosenduft-academy-logo.jpg" alt="Academy logo"/>Academy home</a><form action={studentLogout}><button type="submit">Switch student</button></form></nav><header><small>PERSONALIZED STUDENT ACCESS</small><h1>{admin?"Choose a student portal":`Welcome, ${choices[0].name}`}</h1><p>Open the assigned learning world and continue the current quarterly journey.</p></header><section>{choices.map(entry=><article key={entry.name}><span>{entry.name[0]}</span><small>{entry.grade}</small><h2>{entry.title}</h2><p>{entry.description}</p><a href={entry.url}>Open {entry.name}’s lessons →</a></article>)}</section></main>;
+ return <main className="studentPortal"><nav><a href="/"><Image src="/branding/weems-rosenduft-academy-logo.jpg" alt="Academy logo" width={100} height={100} sizes="50px"/>Academy home</a><form action={studentLogout}><button type="submit">Switch student</button></form></nav><header><small>PERSONALIZED STUDENT ACCESS</small><h1>{admin?"Choose a student portal":`Welcome, ${choices[0].name}`}</h1><p>Open the assigned learning world and continue the current quarterly journey.</p></header><section>{choices.map(entry=><article key={entry.name}><span className="studentPortalPhoto"><Image src={entry.photo} alt={`${entry.name} profile photo`} width={180} height={180} sizes="90px"/></span><small>{entry.grade}</small><h2>{entry.title}</h2><p>{entry.description}</p><a href={entry.url}>Open {entry.name}’s lessons →</a></article>)}</section></main>;
 }
